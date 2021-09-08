@@ -8,9 +8,8 @@ const GameField = () => {
     const [endGame, setEndGame] = useState(false);
     const [snake, setSnake] = useState([{x:0,y:0},{x:1,y:0}]);
     const [direction, setDirection] = useState('right');
-    const [delay, setDelay] = useState(5000);
-    const [id, setStateInterval] = useState();
-
+    const [stopGame, setStopGame] = useState(false);
+    const savedCallback = useRef();
     const width=10;
     const height=10;
     let initialRows = [];
@@ -44,11 +43,13 @@ const GameField = () => {
 
     useEffect(() => {
         document.addEventListener("keydown", changeDirectionWithKeys);
+
         return () => document.removeEventListener("keydown", changeDirectionWithKeys);
     }, [])
 
     const displaySnake = () => {
         const newRows = initialRows;
+
         snake.forEach(cell => {
             newRows[cell.x][cell.y]='snake';
         })
@@ -61,31 +62,32 @@ const GameField = () => {
     }
     const moveSnake = () => {
         const newSnake = [];
+
         switch(direction) {
             case 'right':
                 if (isOutOfBoard(snake[0].y + 1)) {
-                    setDelay(null)
+
                     return setEndGame(true);
                 }
                 newSnake.push({x: snake[0].x, y: (snake[0].y + 1)})
                 break;
             case 'left':
                 if (isOutOfBoard(snake[0].y)) {
-                    setDelay(null)
+
                     return setEndGame(true);
                 }
                 newSnake.push({x: snake[0].x, y: (snake[0].y - 1)})
                 break;
             case 'top':
                 if (isOutOfBoard(snake[0].x - 1)) {
-                    setDelay(null)
+
                     return setEndGame(true);
                 }
                 newSnake.push({x: (snake[0].x - 1), y: snake[0].y})
                 break;
             case 'bottom':
                 if (isOutOfBoard(snake[0].x + 1)) {
-                    setDelay(null)
+
                     return setEndGame(true);
                 }
                 newSnake.push({x: (snake[0].x + 1), y: snake[0].y})
@@ -96,25 +98,23 @@ const GameField = () => {
         displaySnake();
     }
 
-    useInterval(moveSnake, 400);
-
-    function useInterval(callback, delay) {
-        const savedCallback = useRef();
+        useEffect(() => {
+            if(!stopGame){
+                savedCallback.current = moveSnake
+            }
+        }, [moveSnake])
 
         useEffect(() => {
-            savedCallback.current = callback;
-        }, [callback]);
+            let id;
+            if(!stopGame){
+                const x = () =>  savedCallback.current()
+                id = setInterval(x, 600)
+            }
 
-        useEffect(() => {
-            function tick() {
-                savedCallback.current();
+            if(stopGame){
+                clearInterval(id);
             }
-            if (delay !== null) {
-                let id = setInterval(tick, delay);
-                setStateInterval(id)
-            }
-        }, [delay]);
-    }
+        }, [stopGame])
 
     const displayRows = rows.map(row =>
         <li>
@@ -125,10 +125,16 @@ const GameField = () => {
         </li>
     );
 
+    const text = stopGame? 'Continue' : 'Stop'
+
+    const changeGameStatus = () => {
+            stopGame ? setStopGame(false): setStopGame(true)
+        }
+
     return (
         <>
             { displayRows }
-            <button onClick={() => clearInterval(id)}>Stop</button>
+            <button onClick={changeGameStatus}>{text}</button>
             {
                 endGame && (
                     <Modal />
