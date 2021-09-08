@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Snake from './snake.png'
+import Snake from '../../assets/snake.png'
 import useStyles from './useStyles';
-import Modal from './Modal'
+import Modal from '../Modal'
 
 const GameField = () => {
     const classes = useStyles();
@@ -15,14 +15,12 @@ const GameField = () => {
     let initialRows = [];
     const [rows, setRows] = useState(initialRows);
 
-    useEffect(() => {
         for(let i=0; i<height; i++) {
             initialRows.push([]);
             for(let k=0; k<width; k++) {
                 initialRows[i].push('blank');
             }
         }
-    }, [])
 
     const changeDirectionWithKeys = ({ keyCode }) => {
         switch(keyCode) {
