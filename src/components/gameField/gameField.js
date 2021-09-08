@@ -9,6 +9,7 @@ const GameField = () => {
     const [snake, setSnake] = useState([{x:0,y:0},{x:1,y:0}]);
     const [direction, setDirection] = useState('right');
     const [delay, setDelay] = useState(5000);
+    const [id, setStateInterval] = useState();
 
     const width=10;
     const height=10;
@@ -110,7 +111,7 @@ const GameField = () => {
             }
             if (delay !== null) {
                 let id = setInterval(tick, delay);
-                return () => clearInterval(id);
+                setStateInterval(id)
             }
         }, [delay]);
     }
@@ -127,6 +128,7 @@ const GameField = () => {
     return (
         <>
             { displayRows }
+            <button onClick={() => clearInterval(id)}>Stop</button>
             {
                 endGame && (
                     <Modal />
