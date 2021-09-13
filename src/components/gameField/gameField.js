@@ -2,14 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import Snake from '../../assets/snake.png'
 import useStyles from './useStyles';
 import Modal from '../Modal'
+import { useDispatch, useSelector } from "react-redux";
+import { changeGameStatusToStop } from "../../redux/game/game-actions";
 
 const GameField = () => {
     const classes = useStyles();
     const [endGame, setEndGame] = useState(false);
     const [snake, setSnake] = useState([{x:0,y:0},{x:1,y:0}]);
     const [direction, setDirection] = useState('right');
-    const [stopGame, setStopGame] = useState(false);
+    const stopGame = useSelector(state => state.stopGame);
+    const dispatch = useDispatch();
     const savedCallback = useRef();
+    let intervalId = useRef(null);
     const width=10;
     const height=10;
     let initialRows = [];
@@ -102,18 +106,18 @@ const GameField = () => {
             if(!stopGame){
                 savedCallback.current = moveSnake
             }
-        }, [moveSnake])
+        }, [moveSnake, stopGame])
 
         useEffect(() => {
-            let id;
             if(!stopGame){
                 const x = () =>  savedCallback.current()
-                id = setInterval(x, 600)
+                intervalId.current = setInterval(x, 1000)
+            }
+            if(stopGame && intervalId.current){
+                clearInterval(intervalId.current);
+                intervalId.current = null;
             }
 
-            if(stopGame){
-                clearInterval(id);
-            }
         }, [stopGame])
 
     const displayRows = rows.map(row =>
@@ -128,7 +132,9 @@ const GameField = () => {
     const text = stopGame? 'Continue' : 'Stop'
 
     const changeGameStatus = () => {
-            stopGame ? setStopGame(false): setStopGame(true)
+            stopGame ?
+                dispatch(changeGameStatusToStop(false))
+                : dispatch(changeGameStatusToStop(true));
         }
 
     return (
