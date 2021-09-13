@@ -2,16 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import Snake from '../../assets/snake.png'
 import useStyles from './useStyles';
 import Modal from '../Modal'
-import { useDispatch, useSelector } from "react-redux";
-import { changeGameStatusToStop, changeDirection } from "../../redux/game/game-actions";
+import { useSelector } from "react-redux";
+import Timer from "../Timer";
 
 const GameField = () => {
     const classes = useStyles();
     const [endGame, setEndGame] = useState(false);
     const [snake, setSnake] = useState([{x:0,y:0},{x:1,y:0}]);
     const stopGame = useSelector(state => state.stopGame);
-    const direction = useSelector(state => state.direction);
-    const dispatch = useDispatch();
+    const [direction, setDirection] = useState('right');
     const savedCallback = useRef();
     let intervalId = useRef(null);
     const width=10;
@@ -29,16 +28,16 @@ const GameField = () => {
     const changeDirectionWithKeys = ({ keyCode }) => {
         switch(keyCode) {
             case 37:
-                changeDirection('left');
+                setDirection('left');
                 break;
             case 38:
-                changeDirection('top');
+                setDirection('top');
                 break;
             case 39:
-                changeDirection('right');
+                setDirection('right');
                 break;
             case 40:
-                changeDirection('bottom');
+                setDirection('bottom');
                 break;
             default:
                 break;
@@ -129,23 +128,15 @@ const GameField = () => {
         </li>
     );
 
-    const text = stopGame? 'Continue' : 'Stop'
-
-    const changeGameStatus = () => {
-            stopGame ?
-                dispatch(changeGameStatusToStop(false))
-                : dispatch(changeGameStatusToStop(true));
-        }
-
     return (
         <>
             { displayRows }
-            <button onClick={changeGameStatus}>{text}</button>
             {
                 endGame && (
                     <Modal />
                 )
             }
+            <Timer />
         </>
     )
 }

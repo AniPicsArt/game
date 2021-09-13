@@ -1,12 +1,7 @@
 import * as actionTypes from './game-types';
 
-export const changeGameStatusToStop = payload => ({
+export const changeGameState = payload => ({
     type: actionTypes.SET_STOP_GAME,
     payload,
 });
-
-export const changeDirection = payload => ({
-    type: actionTypes.SET_DIRECTION,
-    payload,
-})
 
