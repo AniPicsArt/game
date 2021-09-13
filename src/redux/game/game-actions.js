@@ -5,3 +5,8 @@ export const changeGameStatusToStop = payload => ({
     payload,
 });
 
+export const changeDirection = payload => ({
+    type: actionTypes.SET_DIRECTION,
+    payload,
+})
+

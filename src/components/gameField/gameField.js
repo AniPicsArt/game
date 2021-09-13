@@ -3,14 +3,14 @@ import Snake from '../../assets/snake.png'
 import useStyles from './useStyles';
 import Modal from '../Modal'
 import { useDispatch, useSelector } from "react-redux";
-import { changeGameStatusToStop } from "../../redux/game/game-actions";
+import { changeGameStatusToStop, changeDirection } from "../../redux/game/game-actions";
 
 const GameField = () => {
     const classes = useStyles();
     const [endGame, setEndGame] = useState(false);
     const [snake, setSnake] = useState([{x:0,y:0},{x:1,y:0}]);
-    const [direction, setDirection] = useState('right');
     const stopGame = useSelector(state => state.stopGame);
+    const direction = useSelector(state => state.direction);
     const dispatch = useDispatch();
     const savedCallback = useRef();
     let intervalId = useRef(null);
@@ -29,16 +29,16 @@ const GameField = () => {
     const changeDirectionWithKeys = ({ keyCode }) => {
         switch(keyCode) {
             case 37:
-                setDirection('left');
+                changeDirection('left');
                 break;
             case 38:
-                setDirection('top');
+                changeDirection('top');
                 break;
             case 39:
-                setDirection('right');
+                changeDirection('right');
                 break;
             case 40:
-                setDirection('bottom');
+                changeDirection('bottom');
                 break;
             default:
                 break;
