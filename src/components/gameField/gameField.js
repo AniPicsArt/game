@@ -2,21 +2,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import Snake from '../../assets/snake.png'
 import useStyles from './useStyles';
 import Modal from '../Modal'
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Timer from "../Timer";
+import { FinishGame, SnakePosition, Direction } from "../../redux/game/game-actions";
 
 const GameField = () => {
     const classes = useStyles();
-    const [endGame, setEndGame] = useState(false);
-    const [snake, setSnake] = useState([{x:0,y:0},{x:1,y:0}]);
-    const stopGame = useSelector(state => state.stopGame);
-    const [direction, setDirection] = useState('right');
+    const { stopGame, endGame, snake, direction } = useSelector(state => state);
     const savedCallback = useRef();
     let intervalId = useRef(null);
     const width=10;
     const height=10;
     let initialRows = [];
     const [rows, setRows] = useState(initialRows);
+    const dispatch = useDispatch();
 
         for(let i=0; i<height; i++) {
             initialRows.push([]);
@@ -28,16 +27,16 @@ const GameField = () => {
     const changeDirectionWithKeys = ({ keyCode }) => {
         switch(keyCode) {
             case 37:
-                setDirection('left');
+                dispatch(Direction('left'));
                 break;
             case 38:
-                setDirection('top');
+                dispatch(Direction('top'));
                 break;
             case 39:
-                setDirection('right');
+                dispatch(Direction('right'));
                 break;
             case 40:
-                setDirection('bottom');
+                dispatch(Direction('bottom'));
                 break;
             default:
                 break;
@@ -70,34 +69,42 @@ const GameField = () => {
             case 'right':
                 if (isOutOfBoard(snake[0].y + 1)) {
 
-                    return setEndGame(true);
+                    dispatch(FinishGame(true));
+
+                    return;
                 }
                 newSnake.push({x: snake[0].x, y: (snake[0].y + 1)})
                 break;
             case 'left':
                 if (isOutOfBoard(snake[0].y)) {
 
-                    return setEndGame(true);
+                    dispatch(FinishGame(true));
+
+                    return
                 }
                 newSnake.push({x: snake[0].x, y: (snake[0].y - 1)})
                 break;
             case 'top':
                 if (isOutOfBoard(snake[0].x - 1)) {
 
-                    return setEndGame(true);
+                    dispatch(FinishGame(true));
+
+                    return
                 }
                 newSnake.push({x: (snake[0].x - 1), y: snake[0].y})
                 break;
             case 'bottom':
                 if (isOutOfBoard(snake[0].x + 1)) {
 
-                    return setEndGame(true);
+                    dispatch(FinishGame(true));
+
+                    return
                 }
                 newSnake.push({x: (snake[0].x + 1), y: snake[0].y})
             default:
                 break;
         }
-        setSnake(newSnake);
+        dispatch(SnakePosition(newSnake));
         displaySnake();
     }
 

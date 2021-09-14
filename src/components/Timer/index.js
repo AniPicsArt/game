@@ -1,32 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { changeGameState } from "../../redux/game/game-actions";
-import GameField from "../gameField/gameField";
+import { ChangeGameState } from "../../redux/game/game-actions";
 import useStyles from "./useStyles";
 import classNames from 'classnames';
+import { SnakePosition } from "../../redux/game/game-actions";
 
 const Timer = () => {
     const classes = useStyles();
     const [seconds, setSeconds] = useState(0);
     const [isActive, setIsActive] = useState(true);
     const dispatch = useDispatch();
-    const stopGame = useSelector(state => state.stopGame);
-    const [startGame, setStartGame] = useState(false);
+    const { stopGame, endGame } = useSelector(state => state);
 
     function toggle() {
         setIsActive(!isActive);
         stopGame ?
-                    dispatch(changeGameState(false))
-                    : dispatch(changeGameState(true));
+                    dispatch(ChangeGameState(false))
+                    : dispatch(ChangeGameState(true));
     }
 
     function reset() {
         setSeconds(0);
         setIsActive(false);
+        dispatch(SnakePosition([{x:0,y:0},{x:1,y:0}]));
     }
 
     useEffect(() => {
         let interval = null;
+
+        if(endGame) {
+            console.log(interval, '121212')
+            clearInterval(interval);
+            return
+        }
+
         if (isActive) {
             interval = setInterval(() => {
                 setSeconds(seconds => seconds + 1);
@@ -34,8 +41,9 @@ const Timer = () => {
         } else if (!isActive && seconds !== 0) {
             clearInterval(interval);
         }
+
         return () => clearInterval(interval);
-    }, [isActive, seconds]);
+    }, [isActive, seconds, endGame]);
 
     return (
         <div className={classes.container}>
