@@ -7,9 +7,8 @@ import { SET_STOP_GAME,
 const gameReducer = (state = {
     stopGame: false,
     endGame: false,
-    snake: [{x:0,y:0},{x:1,y:0}],
+    snake: [{x:0,y:0}],
     direction: 'right',
-
 }, action) => {
     switch (action.type) {
         case (SET_STOP_GAME): {

@@ -12,17 +12,20 @@ const handleKeyDown = useCallback( (event) => {
 
     if((keyCode === 13 || which === 13 ) && value) {
         setStartGame(true);
-
-        const user = { name: value };
-        axios.post('https://612e9e1ed11e5c001755865e.mockapi.io/api/v1/results', user);
+        axios.post('https://612e9e1ed11e5c001755865e.mockapi.io/api/v1/results', { name: value });
     }
 }, [])
 
     return (
       <div className={classes.App}>
-          {startGame ? <GameField/> : <div className={classes.startContainer}>
+          {startGame ?
+              <GameField/>
+              : (
+              <div className={classes.startContainer}>
                   <input type='text' onKeyPress={(e) => handleKeyDown(e)} />
-      </div> }
+              </div>
+              )
+          }
       </div>
   );
 }

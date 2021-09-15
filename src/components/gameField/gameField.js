@@ -117,7 +117,7 @@ const GameField = () => {
         useEffect(() => {
             if(!stopGame){
                 const x = () =>  savedCallback.current()
-                intervalId.current = setInterval(x, 1000)
+                intervalId.current = setInterval(x, 700)
             }
             if(stopGame && intervalId.current){
                 clearInterval(intervalId.current);

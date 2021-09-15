@@ -14,9 +14,7 @@ const Timer = () => {
 
     function toggle() {
         setIsActive(!isActive);
-        stopGame ?
-                    dispatch(ChangeGameState(false))
-                    : dispatch(ChangeGameState(true));
+        dispatch(ChangeGameState(!stopGame));
     }
 
     function reset() {
@@ -29,7 +27,6 @@ const Timer = () => {
         let interval = null;
 
         if(endGame) {
-            console.log(interval, '121212')
             clearInterval(interval);
             return
         }
